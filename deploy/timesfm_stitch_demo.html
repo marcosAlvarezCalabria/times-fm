@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TimesFM Forecast OS — Enterprise Workstation</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-lowest": "#0a0e18",
+            "surface-container-high": "#262a35",
+            "surface-dim": "#0f131d",
+            "on-background": "#dfe2f1",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary-container": "#e6ecff",
+            "surface-container-highest": "#313540",
+            "outline-variant": "#3d494c",
+            "on-tertiary": "#003824",
+            "outline": "#869397",
+            "on-primary": "#003640",
+            "on-error": "#690005",
+            "tertiary": "#4edea3",
+            "surface-tint": "#4cd7f6",
+            "tertiary-container": "#1bbd85",
+            "on-tertiary-container": "#00452e",
+            "surface-bright": "#353944",
+            "inverse-primary": "#00687a",
+            "secondary-fixed": "#d8e2ff",
+            "error-container": "#93000a",
+            "on-secondary": "#002e6a",
+            "error": "#ffb4ab",
+            "on-primary-container": "#00424f",
+            "on-surface-variant": "#bcc9cd",
+            "primary-container": "#06b6d4",
+            "on-secondary-fixed-variant": "#004395",
+            "on-secondary-fixed": "#001a42",
+            "surface-container-low": "#171b26",
+            "background": "#0f131d",
+            "surface-variant": "#313540",
+            "primary": "#4cd7f6",
+            "on-primary-fixed": "#001f26",
+            "on-tertiary-fixed": "#002113",
+            "primary-fixed": "#acedff",
+            "primary-fixed-dim": "#4cd7f6",
+            "on-surface": "#dfe2f1",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-primary-fixed-variant": "#004e5c",
+            "inverse-surface": "#dfe2f1",
+            "secondary-fixed-dim": "#adc6ff",
+            "on-error-container": "#ffdad6",
+            "surface-container": "#1c1f2a",
+            "tertiary-fixed-dim": "#4edea3",
+            "surface": "#0f131d",
+            "secondary-container": "#0566d9",
+            "inverse-on-surface": "#2c303b",
+            "secondary": "#adc6ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-lg": "0.75rem",
+            "margin": "0.75rem",
+            "space-sm": "0.25rem",
+            "gutter": "0.5rem",
+            "space-xl": "1rem",
+            "space-md": "0.5rem",
+            "space-xs": "0.125rem"
+          },
+          "fontFamily": {
+            "body-md": ["Inter"],
+            "body-sm": ["Inter"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"],
+            "label-sm": ["JetBrains Mono"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "label-lg": ["JetBrains Mono"],
+            "label-md": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "body-md": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+            "body-sm": ["11px", {"lineHeight": "15px", "fontWeight": "400"}],
+            "headline-lg": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+            "headline-sm": ["15px", {"lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "600"}],
+            "headline-md": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "body-lg": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "label-sm": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+            "headline-xl": ["32px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "label-lg": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+            "label-md": ["11px", {"lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "500"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 16px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .glow-cyan {
+      box-shadow: 0 0 16px -2px rgba(6, 182, 212, 0.35);
+    }
+    .glow-crimson {
+      box-shadow: 0 0 14px -2px rgba(239, 68, 68, 0.45);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 8px -1px rgba(16, 185, 129, 0.4);
+    }
+    .hairline-b {
+      border-bottom: 1px solid #1E293B;
+    }
+    .hairline-r {
+      border-right: 1px solid #1E293B;
+    }
+    .hairline-t {
+      border-top: 1px solid #1E293B;
+    }
+    .hairline-l {
+      border-left: 1px solid #1E293B;
+    }
+    .hairline-all {
+      border: 1px solid #1E293B;
+    }
+    /* Custom scrollbar for dense data */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0e18;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #313540;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4cd7f6;
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface antialiased select-none font-body-sm overflow-x-hidden min-h-screen flex flex-col">
+<!-- ================= TOP NAVIGATION BAR ================= -->
+<header class="w-full px-space-lg py-space-sm flex justify-between items-center bg-surface-dim border-b border-outline-variant sticky top-0 z-50">
+<!-- Left: Brand & Foundation Model Pulse Tag -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-lg">stacked_line_chart</span>
+<span class="text-headline-sm font-headline-sm font-bold tracking-tight text-primary">TimesFM Forecast OS</span>
+</div>
+<div class="h-4 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container-low hairline-all">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-container opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary-container"></span>
+</span>
+<span class="text-label-sm font-label-sm text-primary tracking-wider uppercase font-semibold">GOOGLE TIMESFM 200M FOUNDATION MODEL (Zero-Shot Active)</span>
+</div>
+</div>
+<!-- Center: Live Telemetry Chips -->
+<div class="hidden xl:flex items-center gap-2">
+<div class="flex items-center gap-1.5 px-2 py-1 bg-surface-container-lowest hairline-all rounded text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-secondary text-sm">schedule</span>
+<span>Context Window: <strong class="text-on-surface">512 Days</strong></span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-1 bg-surface-container-lowest hairline-all rounded text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-primary text-sm">tune</span>
+<span>Multi-Quantile: <strong class="text-primary font-semibold">P10 / P50 / P90</strong></span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-1 bg-surface-container-lowest hairline-all rounded text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-tertiary text-sm">bolt</span>
+<span>Inference: <strong class="text-tertiary">14ms</strong> (Local CPU/GPU)</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-1 bg-surface-container-lowest hairline-all rounded text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>Data Sync: <strong class="text-on-surface">Shopify &amp; Square POS</strong></span>
+</div>
+</div>
+<!-- Right: Store Context, Range, Export Button -->
+<div class="flex items-center gap-3">
+<!-- Store Selector Pill -->
+<div class="flex items-center gap-2 px-2.5 py-1 bg-surface-container-low hairline-all rounded hover:bg-surface-container cursor-pointer transition-colors">
+<div class="w-5 h-5 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary font-label-sm text-[9px] font-bold">NG</div>
+<div class="flex flex-col text-left">
+<span class="font-headline-sm text-[11px] font-semibold text-on-surface leading-tight">Nordic Goods &amp; Apparel Co.</span>
+<span class="font-label-sm text-[9px] text-on-surface-variant leading-none">Omnichannel Retail</span>
+</div>
+<span class="material-symbols-outlined text-outline text-xs">expand_more</span>
+</div>
+<!-- Date Range Picker Pill -->
+<div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-lowest hairline-all rounded text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-outline text-xs">calendar_today</span>
+<span>Últimos 90 Días + 30 Días Forecast</span>
+</div>
+<!-- Primary Action CTA -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-primary-container text-on-primary-container font-label-md text-label-md font-bold rounded glow-cyan hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">file_download</span>
+<span>Exportar Informe Ejecutivo</span>
+</button>
+<!-- Terminal Quick Icon -->
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded hairline-all transition-colors" title="Ver Telemetría Kernel">
+<span class="material-symbols-outlined text-sm">terminal</span>
+</button>
+</div>
+</header>
+<!-- ================= SUB-NAVIGATION WORKSPACE LINKS ================= -->
+<nav class="w-full px-space-lg py-1 bg-surface-container-lowest hairline-b flex items-center justify-between">
+<div class="flex items-center gap-6">
+<a class="text-primary border-b-2 border-primary font-label-md text-label-md pb-1 flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-xs">monitoring</span>
+<span>Workstation</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md pb-1 transition-colors flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-xs">inventory_2</span>
+<span>Inventory Horizon</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md pb-1 transition-colors flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-xs">precision_manufacturing</span>
+<span>Model Diagnostics</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md pb-1 transition-colors flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-xs">stacked_line_chart</span>
+<span>Backtests</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md pb-1 transition-colors flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-xs">dns</span>
+<span>Telemetry</span>
+</a>
+</div>
+<div class="text-label-sm text-outline font-label-sm flex items-center gap-3">
+<span>Zero-Shot Precision: <strong class="text-tertiary">99.4%</strong></span>
+<span class="h-3 w-px bg-outline-variant"></span>
+<span>Cluster: <strong class="text-on-surface">CLUSTER-US-EAST</strong></span>
+</div>
+</nav>
+<!-- ================= MAIN WRAPPER ================= -->
+<main class="flex-1 flex flex-col p-space-md gap-gutter overflow-hidden">
+<!-- 2. EXECUTIVE KPI SUMMARY RIBBON (4 high-impact metric cards) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter w-full">
+<!-- KPI 1: Demanda Total -->
+<div class="bg-surface-container-low hairline-all p-space-md rounded flex flex-col justify-between relative overflow-hidden group hover:border-primary transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Demanda Total Proyectada (30 Días)</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-label-sm text-[10px] text-primary border border-outline-variant">P50 Mediana</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<div class="text-headline-xl font-headline-xl text-on-surface font-bold">3,420 <span class="text-headline-sm font-headline-sm text-outline font-normal">uds</span></div>
+<div class="flex items-center gap-0.5 text-tertiary font-label-md text-label-md">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+<span>+14.2%</span>
+</div>
+</div>
+<div class="mt-2 flex items-center justify-between text-body-sm font-body-sm text-outline">
+<span>vs. mes anterior (2,995 uds)</span>
+<span class="text-primary font-label-sm text-[10px]">TimesFM Conv: 98.2%</span>
+</div>
+<!-- Hairline top accent indicator -->
+<div class="absolute top-0 left-0 w-full h-[2px] bg-primary opacity-60"></div>
+</div>
+<!-- KPI 2: Facturación Proyectada -->
+<div class="bg-surface-container-low hairline-all p-space-md rounded flex flex-col justify-between relative overflow-hidden group hover:border-secondary transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Facturación Proyectada</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-label-sm text-[10px] text-secondary border border-outline-variant">80% Confianza</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<div class="text-headline-xl font-headline-xl text-on-surface font-bold">€84,520</div>
+<div class="flex items-center gap-0.5 text-tertiary font-label-md text-label-md">
+<span class="material-symbols-outlined text-xs">north_east</span>
+<span>+9.8%</span>
+</div>
+</div>
+<div class="mt-2 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span>[P10: <strong class="text-on-surface">€76,100</strong> — P90: <strong class="text-on-surface">€95,400</strong>]</span>
+<span class="text-secondary text-[10px]">Spread ±€9.6k</span>
+</div>
+<div class="absolute top-0 left-0 w-full h-[2px] bg-secondary opacity-60"></div>
+</div>
+<!-- KPI 3: Alertas Críticas de Rotura -->
+<div class="bg-surface-container-low hairline-all p-space-md rounded flex flex-col justify-between relative overflow-hidden group hover:border-error transition-colors glow-crimson">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-error uppercase tracking-wider font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs animate-pulse text-error">warning</span>
+            Alertas Críticas de Rotura
+          </span>
+<span class="px-1.5 py-0.5 rounded bg-error-container/30 text-error font-label-sm text-[9px] font-bold border border-error/40">URGENTE</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<div class="text-headline-xl font-headline-xl text-error font-bold">4 SKUs <span class="text-headline-sm font-headline-sm text-outline font-normal">en Riesgo</span></div>
+<span class="text-label-sm font-label-sm text-error bg-error-container/40 px-1.5 py-0.5 rounded">Rotura &lt; 7 Días</span>
+</div>
+<div class="mt-2 flex items-center justify-between text-body-sm font-body-sm text-outline">
+<span class="text-error font-label-sm text-[10px] font-medium">Impacto estimado: -€12,800</span>
+<span class="text-on-surface font-label-sm text-[10px]">Lead Time prom: 8.5d</span>
+</div>
+<div class="absolute top-0 left-0 w-full h-[2px] bg-error"></div>
+</div>
+<!-- KPI 4: Capital de Compra Óptimo -->
+<div class="bg-surface-container-low hairline-all p-space-md rounded flex flex-col justify-between relative overflow-hidden group hover:border-tertiary transition-colors glow-emerald">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Capital de Compra Óptimo</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-label-sm text-[10px] text-tertiary border border-outline-variant">ROI 3.1x</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<div class="text-headline-xl font-headline-xl text-on-surface font-bold">€4,120</div>
+<div class="flex items-center gap-1 text-tertiary font-label-md text-label-md bg-tertiary/10 px-1.5 py-0.5 rounded border border-tertiary/30">
+<span class="material-symbols-outlined text-xs">verified</span>
+<span>Acción Inmediata</span>
+</div>
+</div>
+<div class="mt-2 flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="text-tertiary font-label-sm text-[10px]">Evita €12,800 en Pérdida de Ventas</span>
+<span class="text-outline font-label-sm text-[10px]">3 Proveedores PO</span>
+</div>
+<div class="absolute top-0 left-0 w-full h-[2px] bg-tertiary"></div>
+</div>
+</section>
+<!-- 3. MAIN WORKSTATION 3-COLUMN DENSE ARCHITECTURE -->
+<div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-gutter min-h-0">
+<!-- ================= COLUMN A: SKU EXPLORER (25% -> 3 of 12 cols) ================= -->
+<aside class="lg:col-span-3 flex flex-col bg-surface-container-low hairline-all rounded overflow-hidden">
+<!-- Search & Filter Header -->
+<div class="p-space-md hairline-b bg-surface-dim space-y-2">
+<!-- Search input -->
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-2 text-outline text-sm">search</span>
+<input class="w-full pl-8 pr-12 py-1.5 bg-surface-container-lowest hairline-all rounded text-body-md font-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary transition-colors text-xs" placeholder="Buscar SKU, producto o categoría..." type="text" value=""/>
+<span class="absolute right-2 font-label-sm text-[9px] px-1 py-0.5 rounded bg-surface-container text-outline border border-outline-variant">⌘K</span>
+</div>
+<!-- Quick Filter Pills -->
+<div class="flex items-center gap-1 overflow-x-auto pb-1 text-label-sm font-label-sm">
+<button class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-semibold shrink-0">Todos (142)</button>
+<button class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hairline-all shrink-0">Top (28)</button>
+<button class="px-2 py-0.5 rounded bg-error/10 text-error hairline-all border-error/40 font-semibold shrink-0 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>
+              Riesgo (4)
+            </button>
+<button class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hairline-all shrink-0">Sobrestock (9)</button>
+</div>
+</div>
+<!-- High-density Product List -->
+<div class="flex-1 overflow-y-auto divide-y divide-outline-variant/30">
+<!-- Product 1: SELECTED ACTIVE ITEM -->
+<div class="p-2.5 bg-surface-container cursor-pointer hairline-l-2 border-l-2 border-l-primary relative transition-all group">
+<div class="flex items-start justify-between gap-1">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-xs font-bold text-on-surface truncate">Chaqueta Impermeable Explorer M</span>
+</div>
+<div class="flex items-center gap-2 mt-0.5 text-label-sm font-label-sm text-outline">
+<span>SKU: <strong class="text-on-surface-variant">EXP-JKT-BLK-M</strong></span>
+<span>•</span>
+<span>Stock: <strong class="text-error">14 uds</strong></span>
+</div>
+</div>
+<!-- Status Badge -->
+<span class="px-1.5 py-0.5 rounded bg-error-container/40 text-error font-label-sm text-[9px] font-bold border border-error/30 tracking-tight shrink-0 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                Crítico
+              </span>
+</div>
+<!-- Mini Sparkline + Trend Line -->
+<div class="mt-2 flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-1 text-error font-label-sm text-[10px]">
+<span>Tendencia:</span>
+<span class="font-bold">▲ +28% dem.</span>
+</div>
+<!-- Mini SVG Sparkline: Stock going down sharply vs demand rising -->
+<div class="w-24 h-6">
+<svg class="w-full h-full" fill="none" viewbox="0 0 96 24">
+<!-- Stock dropping curve -->
+<path d="M0 4 Q 24 6, 48 14 T 96 22" fill="none" stroke="#EF4444" stroke-width="1.75"></path>
+<!-- Projected demand shadow -->
+<path d="M48 14 Q 72 8, 96 2" fill="none" stroke="#4cd7f6" stroke-dasharray="2 2" stroke-width="1.5"></path>
+<circle cx="96" cy="22" fill="#EF4444" r="2.5"></circle>
+</svg>
+</div>
+</div>
+<div class="mt-1 flex items-center justify-between text-[10px] text-outline font-label-sm">
+<span class="text-error">Runout en 5 días</span>
+<span class="text-primary font-semibold">Ver Forecast →</span>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="p-2.5 bg-surface-container-low hover:bg-surface-container/60 cursor-pointer transition-colors group">
+<div class="flex items-start justify-between gap-1">
+<div class="flex-1 min-w-0">
+<div class="font-headline-sm text-xs font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Mochila Urbana Roll-Top 20L</div>
+<div class="flex items-center gap-2 mt-0.5 text-label-sm font-label-sm text-outline">
+<span>SKU: URB-BAG-20L</span>
+<span>•</span>
+<span>Stock: <strong class="text-on-surface">42 uds</strong></span>
+</div>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-[9px] border border-outline-variant shrink-0">
+                Reorden
+              </span>
+</div>
+<div class="mt-2 flex items-center justify-between">
+<span class="text-on-surface-variant font-label-sm text-[10px]">● Estable (±2%)</span>
+<div class="w-24 h-6">
+<svg class="w-full h-full" fill="none" viewbox="0 0 96 24">
+<path d="M0 12 Q 24 16, 48 10 T 96 14" fill="none" stroke="#adc6ff" stroke-width="1.5"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="p-2.5 bg-surface-container-low hover:bg-surface-container/60 cursor-pointer transition-colors group">
+<div class="flex items-start justify-between gap-1">
+<div class="flex-1 min-w-0">
+<div class="font-headline-sm text-xs font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Botella Térmica Inox 750ml</div>
+<div class="flex items-center gap-2 mt-0.5 text-label-sm font-label-sm text-outline">
+<span>SKU: BOT-750-SLV</span>
+<span>•</span>
+<span>Stock: <strong class="text-tertiary">110 uds</strong></span>
+</div>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-tertiary/10 text-tertiary font-label-sm text-[9px] border border-tertiary/30 shrink-0">
+                Óptimo
+              </span>
+</div>
+<div class="mt-2 flex items-center justify-between">
+<span class="text-tertiary font-label-sm text-[10px]">▲ +15% dem.</span>
+<div class="w-24 h-6">
+<svg class="w-full h-full" fill="none" viewbox="0 0 96 24">
+<path d="M0 18 Q 30 14, 60 8 T 96 4" fill="none" stroke="#10B981" stroke-width="1.5"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Product 4 -->
+<div class="p-2.5 bg-surface-container-low hover:bg-surface-container/60 cursor-pointer transition-colors group">
+<div class="flex items-start justify-between gap-1">
+<div class="flex-1 min-w-0">
+<div class="font-headline-sm text-xs font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Gorra Técnica Reflectante</div>
+<div class="flex items-center gap-2 mt-0.5 text-label-sm font-label-sm text-outline">
+<span>SKU: CAP-REF-ORG</span>
+<span>•</span>
+<span>Stock: <strong class="text-on-surface">95 uds</strong></span>
+</div>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary font-label-sm text-[9px] border border-primary/30 shrink-0">
+                Sobrestock
+              </span>
+</div>
+<div class="mt-2 flex items-center justify-between">
+<span class="text-outline font-label-sm text-[10px]">▼ -6% dem.</span>
+<div class="w-24 h-6">
+<svg class="w-full h-full" fill="none" viewbox="0 0 96 24">
+<path d="M0 6 Q 30 10, 60 16 T 96 20" fill="none" stroke="#06B6D4" stroke-width="1.5"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Product 5 -->
+<div class="p-2.5 bg-surface-container-low hover:bg-surface-container/60 cursor-pointer transition-colors group">
+<div class="flex items-start justify-between gap-1">
+<div class="flex-1 min-w-0">
+<div class="font-headline-sm text-xs font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Pantalón Cargo Modular Khaki</div>
+<div class="flex items-center gap-2 mt-0.5 text-label-sm font-label-sm text-outline">
+<span>SKU: CARGO-M-KHK</span>
+<span>•</span>
+<span>Stock: <strong class="text-error">19 uds</strong></span>
+</div>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-error-container/40 text-error font-label-sm text-[9px] font-bold border border-error/30 shrink-0">
+                Crítico
+              </span>
+</div>
+<div class="mt-2 flex items-center justify-between">
+<span class="text-error font-label-sm text-[10px]">▲ +32% dem.</span>
+<div class="w-24 h-6">
+<svg class="w-full h-full" fill="none" viewbox="0 0 96 24">
+<path d="M0 6 Q 35 12, 60 18 T 96 23" fill="none" stroke="#EF4444" stroke-width="1.5"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Footer Action -->
+<div class="p-2 bg-surface-dim hairline-t flex items-center justify-between text-label-sm font-label-sm text-outline">
+<span>Mostrando 5 de 142 SKUs</span>
+<button class="text-primary hover:underline">Gestionar Catálogo →</button>
+</div>
+</aside>
+<!-- ================= COLUMN B: HERO CHART (50% -> 6 of 12 cols) ================= -->
+<section class="lg:col-span-6 flex flex-col bg-surface-container-low hairline-all rounded overflow-hidden">
+<!-- Header Card: SKU details, Horizon Pills & Mode Toggle -->
+<div class="p-space-md hairline-b bg-surface-dim space-y-2.5">
+<div class="flex flex-wrap items-center justify-between gap-2">
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface">Chaqueta Impermeable Explorer M</h1>
+<span class="px-2 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-primary border border-outline-variant font-medium">Outerwear</span>
+<span class="text-headline-sm font-headline-sm font-semibold text-tertiary">€98.00 PVP</span>
+</div>
+<p class="font-label-sm text-label-sm text-outline mt-0.5">SKU: EXP-JKT-BLK-M • Proveedor: TexVanguard Nordic AB • Lead Time: 8 Días</p>
+</div>
+<!-- Mode Toggle -->
+<div class="flex items-center bg-surface-container-lowest p-0.5 rounded hairline-all font-label-sm text-label-sm">
+<button class="px-2.5 py-1 rounded bg-primary-container text-on-primary-container font-bold flex items-center gap-1 shadow-sm">
+<span>📊 Pronóstico Futuro</span>
+</button>
+<button class="px-2.5 py-1 rounded text-on-surface-variant hover:text-on-surface flex items-center gap-1 transition-colors">
+<span>🧪 Auditoría Backtest</span>
+<span class="text-[9px] text-tertiary">(92.4%)</span>
+</button>
+</div>
+</div>
+<!-- Horizon Selector Pills & Legend -->
+<div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+<div class="flex items-center gap-1 font-label-sm text-label-sm">
+<span class="text-outline mr-1 text-[10px]">Horizonte:</span>
+<button class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hairline-all">7 Días</button>
+<button class="px-2.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/50 font-bold">30 Días Táctico (Recomendado)</button>
+<button class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hairline-all">60 Días</button>
+<button class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hairline-all">90 Días</button>
+</div>
+<!-- Chart Legend -->
+<div class="flex items-center gap-3 font-label-sm text-[10px] text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="w-3 h-0.5 bg-on-surface-variant"></span>
+<span>Histórico Real</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-3 h-0.5 bg-primary border-t border-dashed border-primary"></span>
+<span class="text-primary font-semibold">TimesFM P50</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-3 h-2 rounded-sm bg-primary-container/30 border border-primary-container/60"></span>
+<span>Banda P10-P90 (80%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= LARGE PROBABILISTIC FORECASTING CHART ================= -->
+<div class="flex-1 p-space-md flex flex-col justify-between relative bg-gradient-to-b from-surface-container-low via-surface-container-lowest to-surface-container-lowest min-h-[340px]">
+<!-- Chart Canvas Area (SVG High Density) -->
+<div class="relative w-full h-full flex-1 flex flex-col justify-center">
+<svg class="w-full h-72 overflow-visible" fill="none" preserveaspectratio="none" viewbox="0 0 680 260">
+<defs>
+<!-- Shaded confidence interval band gradient -->
+<lineargradient gradientunits="userSpaceOnUse" id="quantileCone" x1="340" x2="660" y1="0" y2="0">
+<stop offset="0%" stop-color="#06B6D4" stop-opacity="0.35"></stop>
+<stop offset="60%" stop-color="#3B82F6" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#06B6D4" stop-opacity="0.12"></stop>
+</lineargradient>
+<!-- Glow filter for inference separator & peak -->
+<filter height="140%" id="glow-cyan-fx" width="140%" x="-20%" y="-20%">
+<fegaussianblur result="blur" stddeviation="3"></fegaussianblur>
+<fecomposite in="SourceGraphic" in2="blur" operator="over"></fecomposite>
+</filter>
+</defs>
+<!-- Coordinate Axes Gridlines -->
+<g stroke="#1E293B" stroke-dasharray="3 3" stroke-width="1">
+<line x1="40" x2="670" y1="30" y2="30"></line>
+<line x1="40" x2="670" y1="80" y2="80"></line>
+<line x1="40" x2="670" y1="130" y2="130"></line>
+<line x1="40" x2="670" y1="180" y2="180"></line>
+<line x1="40" x2="670" y1="230" y2="230"></line>
+</g>
+<!-- Y-Axis Labels (Demanda uds/día) -->
+<g class="font-label-sm text-[9px] fill-outline" font-family="JetBrains Mono">
+<text x="12" y="34">6 uds</text>
+<text x="12" y="84">5 uds</text>
+<text x="12" y="134">3 uds</text>
+<text x="12" y="184">2 uds</text>
+<text x="12" y="234">0 uds</text>
+</g>
+<!-- PROBABILISTIC PREDICTION CONE (P10 to P90 polygon from T_0 = x:340 to x:660) -->
+<polygon fill="url(#quantileCone)" points="
+                340,150
+                380,128 420,110 460,92 500,68 540,54 580,72 620,85 660,98
+                660,195 620,190 580,185 540,178 500,172 460,175 420,170 380,165 
+                340,150" stroke="#06B6D4" stroke-opacity="0.5" stroke-width="1"></polygon>
+<!-- P90 Upper Ceiling Boundary -->
+<path d="M 340 150 Q 380 125, 420 108 T 500 68 T 540 54 T 580 72 T 660 98" fill="none" opacity="0.85" stroke="#4cd7f6" stroke-dasharray="3 3" stroke-width="1.25"></path>
+<!-- P10 Lower Floor Boundary -->
+<path d="M 340 150 Q 380 162, 420 170 T 500 172 T 540 178 T 660 195" fill="none" opacity="0.75" stroke="#3B82F6" stroke-dasharray="3 3" stroke-width="1.25"></path>
+<!-- HISTORICAL REAL SALES (x:40 to x:340) Solid Curve with Observation Nodes -->
+<path d="M 40 195 
+                       Q 75 180, 100 172 
+                       T 160 185 
+                       T 210 145 
+                       T 260 160 
+                       T 300 138 
+                       L 340 150" fill="none" stroke="#CBD5E1" stroke-width="2.25"></path>
+<!-- Historical Data Points -->
+<circle cx="40" cy="195" fill="#0B0F19" r="3" stroke="#CBD5E1" stroke-width="1.5"></circle>
+<circle cx="100" cy="172" fill="#0B0F19" r="3" stroke="#CBD5E1" stroke-width="1.5"></circle>
+<circle cx="160" cy="185" fill="#0B0F19" r="3" stroke="#CBD5E1" stroke-width="1.5"></circle>
+<circle cx="210" cy="145" fill="#0B0F19" r="3" stroke="#CBD5E1" stroke-width="1.5"></circle>
+<circle cx="260" cy="160" fill="#0B0F19" r="3" stroke="#CBD5E1" stroke-width="1.5"></circle>
+<circle cx="300" cy="138" fill="#0B0F19" r="3" stroke="#CBD5E1" stroke-width="1.5"></circle>
+<!-- TIMESFM P50 PROJECTED MEDIAN (Electric Cyan Line x:340 to 660) -->
+<path d="M 340 150 
+                       Q 380 144, 420 135 
+                       T 460 125 
+                       T 500 110 
+                       T 540 92 
+                       T 580 115 
+                       T 620 130 
+                       L 660 142" fill="none" filter="url(#glow-cyan-fx)" stroke="#06B6D4" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- VERTICAL INFERENCE BOUNDARY T_0 (x:340) -->
+<line opacity="0.9" stroke="#06B6D4" stroke-dasharray="4 2" stroke-width="1.5" x1="340" x2="340" y1="20" y2="240"></line>
+<!-- T_0 Pivot Dot Glowing -->
+<circle cx="340" cy="150" fill="#06B6D4" filter="url(#glow-cyan-fx)" r="5"></circle>
+<circle cx="340" cy="150" fill="#0B0F19" r="2"></circle>
+<!-- Projected Peak Node at Week 3 (x:540, y:92) -->
+<circle cx="540" cy="92" fill="#06B6D4" r="4.5" stroke="#ffffff" stroke-width="1.5"></circle>
+<!-- Stockout Horizon Line Alert threshold at y:210 -->
+<line opacity="0.8" stroke="#EF4444" stroke-dasharray="2 4" stroke-width="1" x1="340" x2="660" y1="210" y2="210"></line>
+<text fill="#EF4444" font-family="JetBrains Mono" font-size="8.5" font-weight="600" x="345" y="206">LÍMITE STOCK SEGURIDAD (SS = 12)</text>
+<!-- Timeline markers on bottom -->
+<g class="font-label-sm text-[9px] fill-outline" font-family="JetBrains Mono">
+<text x="40" y="250">-60d</text>
+<text x="140" y="250">-40d</text>
+<text x="240" y="250">-20d</text>
+<text fill="#4cd7f6" font-weight="bold" x="325" y="250">Hoy (T_0)</text>
+<text x="420" y="250">+10d</text>
+<text x="520" y="250">+20d</text>
+<text x="630" y="250">+30d (Fin Horizon)</text>
+</g>
+</svg>
+<!-- Floating Smart AI Callout Badge (Positioned over Week 3 Peak) -->
+<div class="absolute top-10 right-20 sm:right-32 bg-surface-dim/95 border border-primary-container p-2 rounded shadow-2xl backdrop-blur-md max-w-[210px] glow-cyan">
+<div class="flex items-center gap-1.5 text-primary font-label-sm text-[10px] font-bold">
+<span class="material-symbols-outlined text-xs text-primary animate-bounce">bolt</span>
+<span>Pico estacional detectado</span>
+</div>
+<p class="text-[10.5px] text-on-surface font-body-sm mt-0.5 leading-tight">
+<strong>+35%</strong> por campaña <span class="text-tertiary">Black Friday / Fin de mes</span>. Se prevé aceleración del consumo a 4.2 uds/día.
+              </p>
+<div class="mt-1 pt-1 hairline-t flex items-center justify-between text-[9px] font-label-sm text-outline">
+<span>TimesFM Confianza:</span>
+<span class="text-tertiary font-bold">89.4%</span>
+</div>
+</div>
+<!-- Floating T_0 Tag Indicator -->
+<div class="absolute top-2 left-[48%] -translate-x-1/2 bg-surface-container-high px-2 py-0.5 rounded hairline-all font-label-sm text-[9px] text-primary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span>Punto de Inferencia T_0</span>
+</div>
+</div>
+<!-- Bottom Metrics Strip of the Hero Chart -->
+<div class="mt-3 pt-2.5 hairline-t grid grid-cols-1 md:grid-cols-3 gap-2 bg-surface-container-lowest/60 p-2 rounded">
+<!-- Metric 1 -->
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+<div>
+<div class="font-label-sm text-[10px] text-outline">Precisión Histórica Comprobada</div>
+<div class="font-headline-sm text-xs font-bold text-on-surface">92.4% <span class="text-outline font-normal font-label-sm">(Error MAPE: 7.6%)</span></div>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">stacked_bar_chart</span>
+<div>
+<div class="font-label-sm text-[10px] text-outline">Cobertura en Banda P10-P90</div>
+<div class="font-headline-sm text-xs font-bold text-on-surface">96.7% <span class="text-tertiary font-normal font-label-sm">(Dentro de cono)</span></div>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-lg">memory</span>
+<div>
+<div class="font-label-sm text-[10px] text-outline">Algoritmo Activo</div>
+<div class="font-label-sm text-[10px] font-bold text-secondary truncate">Google TimesFM 200M Patch-TF</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ================= COLUMN C: SMART INVENTORY REPLENISHMENT (25% -> 3 of 12 cols) ================= -->
+<aside class="lg:col-span-3 flex flex-col bg-surface-container-low hairline-all rounded overflow-hidden">
+<!-- Header -->
+<div class="p-space-md hairline-b bg-surface-dim">
+<div class="flex items-center gap-1.5 text-headline-sm text-xs font-bold text-on-surface">
+<span class="material-symbols-outlined text-tertiary text-sm">shopping_cart_checkout</span>
+<span>Motor de Reposición &amp; ROP</span>
+</div>
+<p class="font-label-sm text-[10px] text-outline mt-0.5">Cálculo probabilístico para evitar rotura</p>
+</div>
+<div class="flex-1 overflow-y-auto p-space-md space-y-3">
+<!-- Calculation Breakdown Card -->
+<div class="bg-surface-container-lowest hairline-all p-space-md rounded space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-[10px] text-primary font-bold uppercase tracking-wider">Desglose ROP: EXP-JKT-BLK-M</span>
+<span class="px-1.5 py-0.2 rounded bg-error/20 text-error font-label-sm text-[9px] font-semibold">Crítico</span>
+</div>
+<div class="space-y-1.5 font-label-sm text-xs text-on-surface-variant">
+<div class="flex justify-between items-center py-0.5 hairline-b border-outline-variant/30">
+<span>Consumo Diario P50:</span>
+<span class="text-on-surface font-semibold">2.8 uds/día</span>
+</div>
+<div class="flex justify-between items-center py-0.5 hairline-b border-outline-variant/30">
+<span>Lead Time Proveedor:</span>
+<span class="text-on-surface font-semibold">8 días</span>
+</div>
+<div class="flex justify-between items-center py-0.5 hairline-b border-outline-variant/30">
+<span>Stock Seguridad (SS P90):</span>
+<span class="text-secondary font-semibold">12 uds</span>
+</div>
+<div class="flex justify-between items-center py-0.5 hairline-b border-outline-variant/30">
+<span>Punto de Reorden (ROP):</span>
+<span class="text-primary font-bold text-xs">34 uds</span>
+</div>
+<div class="flex justify-between items-center py-0.5 hairline-b border-outline-variant/30">
+<span>Días de Inventario (DOI):</span>
+<span class="text-error font-bold">5.0 días restantes</span>
+</div>
+<div class="flex justify-between items-center py-0.5 text-error font-semibold">
+<span>Fecha Rotura Prevista:</span>
+<span>24 Septiembre</span>
+</div>
+</div>
+</div>
+<!-- High-impact Action Order Box -->
+<div class="bg-gradient-to-br from-surface-container-high via-surface-container-low to-surface-container-lowest p-space-md rounded hairline-all border-primary/50 relative overflow-hidden glow-cyan">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Recomendación TimesFM</span>
+<span class="text-label-sm text-[10px] text-tertiary bg-tertiary/10 px-1.5 py-0.5 rounded border border-tertiary/30">Palet Mínimo</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<div>
+<span class="font-label-sm text-[10px] text-outline block">Sugerido a pedir:</span>
+<div class="text-headline-lg font-headline-lg font-bold text-primary">+45 Unidades</div>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-[10px] text-outline block">Coste Pedido:</span>
+<div class="font-headline-sm text-sm font-bold text-on-surface">€1,350.00</div>
+</div>
+</div>
+<div class="mt-1 flex items-center justify-between text-body-sm font-body-sm text-outline">
+<span>Margen Bruto Est: <strong class="text-tertiary">68%</strong></span>
+<span>Recuperación: <strong class="text-on-surface">16 días</strong></span>
+</div>
+<!-- Primary Action Button -->
+<button class="mt-3 w-full py-2 px-3 bg-gradient-to-r from-primary-container to-secondary-container hover:from-primary hover:to-secondary text-surface-container-lowest font-headline-sm text-xs font-bold rounded flex items-center justify-center gap-2 shadow-lg transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-sm">rocket_launch</span>
+<span>Generar Orden de Compra (PO)</span>
+</button>
+</div>
+<!-- Quick Reorders for Other Critical SKUs -->
+<div class="space-y-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>OTRAS REPOSICIONES URGENTES</span>
+<span class="text-primary cursor-pointer hover:underline">Ver todas (3)</span>
+</div>
+<!-- Item 1 -->
+<div class="p-2 bg-surface-container-lowest hairline-all rounded flex items-center justify-between hover:border-outline transition-colors">
+<div class="min-w-0 pr-2">
+<div class="font-headline-sm text-xs text-on-surface font-semibold truncate">Mochila Urbana Roll-Top</div>
+<div class="font-label-sm text-[10px] text-outline">Sugerido: <strong class="text-tertiary">+30 uds</strong> • Lead 12d</div>
+</div>
+<button class="px-2 py-1 bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface font-label-sm text-[10px] font-bold rounded hairline-all transition-colors shrink-0">
+                Pedir
+              </button>
+</div>
+<!-- Item 2 -->
+<div class="p-2 bg-surface-container-lowest hairline-all rounded flex items-center justify-between hover:border-outline transition-colors">
+<div class="min-w-0 pr-2">
+<div class="font-headline-sm text-xs text-on-surface font-semibold truncate">Pantalón Cargo Modular</div>
+<div class="font-label-sm text-[10px] text-outline">Sugerido: <strong class="text-tertiary">+50 uds</strong> • Lead 6d</div>
+</div>
+<button class="px-2 py-1 bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface font-label-sm text-[10px] font-bold rounded hairline-all transition-colors shrink-0">
+                Pedir
+              </button>
+</div>
+<!-- Item 3 -->
+<div class="p-2 bg-surface-container-lowest hairline-all rounded flex items-center justify-between hover:border-outline transition-colors">
+<div class="min-w-0 pr-2">
+<div class="font-headline-sm text-xs text-on-surface font-semibold truncate">Chubasquero Packable Light</div>
+<div class="font-label-sm text-[10px] text-outline">Sugerido: <strong class="text-tertiary">+25 uds</strong> • Lead 14d</div>
+</div>
+<button class="px-2 py-1 bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface font-label-sm text-[10px] font-bold rounded hairline-all transition-colors shrink-0">
+                Pedir
+              </button>
+</div>
+</div>
+</div>
+<!-- Right Column Footer -->
+<div class="p-2 bg-surface-dim hairline-t flex items-center justify-between text-label-sm text-[10px] text-outline font-label-sm">
+<span>Integración ERP: SAP / Holded / Shopify</span>
+<span class="text-tertiary">Sincronizado</span>
+</div>
+</aside>
+</div>
+<!-- 4. BOTTOM BAR: QUICK INGESTION DRAG & DROP ZONE & TELEMETRY FOOTER -->
+<footer class="w-full bg-surface-dim hairline-all rounded p-space-sm flex flex-col md:flex-row items-center justify-between gap-2 text-label-sm font-label-sm">
+<!-- Drag & Drop Zone Pill -->
+<div class="flex-1 w-full flex items-center justify-center gap-2 py-1 px-3 bg-surface-container-lowest rounded border border-dashed border-outline-variant hover:border-primary cursor-pointer transition-colors group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-sm">upload_file</span>
+<span class="text-on-surface-variant group-hover:text-on-surface text-body-sm text-xs transition-colors">
+          Arrastra exportaciones de <strong>Shopify, Square, WooCommerce o Excel</strong> aquí (Formato autodetectado: Fecha, SKU, Cantidad)
+        </span>
+<span class="font-label-sm text-[9px] px-1.5 py-0.5 rounded bg-surface-container text-primary border border-outline-variant">Auto-Ingest</span>
+</div>
+<!-- Zero-Shot Model Status Indicators -->
+<div class="flex items-center gap-3 shrink-0 text-outline text-[10.5px]">
+<div class="flex items-center gap-1.5">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-tertiary"></span>
+</span>
+<span class="text-on-surface">Powered by <strong>Google TimesFM Zero-Shot Architecture</strong></span>
+</div>
+<span>•</span>
+<span>Latencia: <strong class="text-primary">14ms</strong></span>
+<span>•</span>
+<span class="bg-surface-container-high px-1.5 py-0.5 rounded text-secondary font-semibold">FP16 TensorRT</span>
+</div>
+</footer>
+</main>
+<!-- MICRO-INTERACTION SCRIPT FOR INTERACTIVE DEMO ACCENT -->
+<script>
+    // Lightweight toggle for visual polish in demo presentation
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterPills = document.querySelectorAll('button');
+      filterPills.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          // Subtle click wave or console telemetry log
+          console.log('[TimesFM Workstation Event]:', e.currentTarget.innerText.trim());
+        });
+      });
+    });
+  </script>
+</body></html>
