@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google TimesFM — Previsión de Ventas e Inventario PYME</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+
+  <!-- TOP BAR -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-blue-500/20">
+          TF
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            TimesFM Sales Forecast
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">PYME AI</span>
+          </h1>
+          <p class="text-xs text-slate-400">Zero-Shot Foundation Model para Retail y Comercio Electrónico</p>
+        </div>
+      </div>
+
+      <!-- Actions & Status -->
+      <div class="flex items-center gap-3">
+        <div id="engine-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span id="engine-name" class="font-medium text-slate-300">Conectando a TimesFM...</span>
+        </div>
+
+        <button onclick="loadDemoData()" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition flex items-center gap-1.5 shadow-sm">
+          <span>☕</span> Cargar Demo PYME
+        </button>
+
+        <label class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 cursor-pointer transition flex items-center gap-1.5">
+          <span>📂</span> Subir CSV/Excel
+          <input type="file" id="file-input" class="hidden" accept=".csv,.txt" onchange="uploadCSV(this)">
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- PRODUCT SELECTOR & HORIZON / BACKTEST SWITCHER -->
+    <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3 min-w-[280px]">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Producto / SKU:</span>
+        <select id="product-select" onchange="onProductChange()" class="bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none w-full max-w-xs">
+          <!-- Dinámico -->
+        </select>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">Modo:</span>
+        <button onclick="setHorizon(7)" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-700 hover:border-slate-500 transition" data-mode="7">7 Días</button>
+        <button onclick="setHorizon(30)" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition" data-mode="30">30 Días</button>
+        <button onclick="setHorizon(60)" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-700 hover:border-slate-500 transition" data-mode="60">60 Días</button>
+        <button onclick="setHorizon(90)" class="mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-700 hover:border-slate-500 transition" data-mode="90">90 Días</button>
+        <button onclick="runBacktest()" class="mode-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition flex items-center gap-1.5" data-mode="backtest">
+          <span>🧪</span> Prueba Ciega (Backtest)
+        </button>
+      </div>
+    </div>
+
+    <!-- BACKTEST BANNER (VISIBLE EN MODO BACKTEST) -->
+    <div id="backtest-banner" class="hidden bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/30 rounded-2xl p-4">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 class="text-sm font-bold text-amber-300 flex items-center gap-2">
+            <span>🔬</span> Modo Auditoría Ciega: Evaluación Retrospectiva
+          </h3>
+          <p class="text-xs text-slate-300 mt-0.5" id="backtest-verdict">
+            Ocultamos los últimos 7 días reales al modelo y medimos con qué precisión predijo la realidad.
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <div class="text-[10px] text-slate-400 uppercase font-bold">Precisión Histórica</div>
+            <div class="text-xl font-black text-emerald-400" id="bt-accuracy">--%</div>
+          </div>
+          <div class="h-8 w-px bg-slate-700"></div>
+          <div class="text-right">
+            <div class="text-[10px] text-slate-400 uppercase font-bold">Cobertura Cono P10-P90</div>
+            <div class="text-xl font-black text-cyan-400" id="bt-coverage">--%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-4">
+        <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+          <span id="kpi-title-1">Demanda Proyectada (P50)</span>
+          <span id="trend-tag" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-700 text-slate-300">--</span>
+        </div>
+        <div class="text-2xl font-extrabold text-white" id="kpi-p50">--</div>
+        <div class="text-xs text-slate-400 mt-1" id="kpi-p50-sub">Unidades estimadas en el horizonte</div>
+      </div>
+
+      <div class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-4">
+        <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+          <span id="kpi-title-2">Cono de Incertidumbre (P10 - P90)</span>
+          <span class="text-blue-400 text-xs font-medium">80% Confianza</span>
+        </div>
+        <div class="text-2xl font-extrabold text-cyan-400" id="kpi-interval">--</div>
+        <div class="text-xs text-slate-400 mt-1" id="kpi-interval-sub">Escenario bajo vs pico de demanda</div>
+      </div>
+
+      <div class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-4">
+        <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+          <span id="kpi-title-3">Cobertura de Inventario (DOI)</span>
+          <span id="doi-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-700">--</span>
+        </div>
+        <div class="text-2xl font-extrabold text-white" id="kpi-doi">--</div>
+        <div class="text-xs text-slate-400 mt-1" id="kpi-runout">Fecha de agotamiento: --</div>
+      </div>
+
+      <div class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-4">
+        <div class="flex items-center justify-between text-slate-400 text-xs mb-1">
+          <span id="kpi-title-4">Acción Sugerida</span>
+          <span class="text-xs font-semibold text-slate-400" id="kpi-action-tag">Punto Reorden (ROP)</span>
+        </div>
+        <div class="text-2xl font-extrabold text-amber-400" id="kpi-action">--</div>
+        <div class="text-xs text-slate-400 mt-1" id="kpi-action-sub">Punto de reorden: --</div>
+      </div>
+    </div>
+
+    <!-- FORECAST / BACKTEST CHART SECTION -->
+    <div class="bg-slate-800/50 border border-slate-700/70 rounded-2xl p-5 shadow-xl">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2" id="chart-main-title">
+            <span>📈</span> Pronóstico Probabilístico Zero-Shot con Google TimesFM
+          </h2>
+          <p class="text-xs text-slate-400" id="chart-sub-title">
+            Serie histórica real junto con la mediana proyectada (P50) y la banda sombreada de seguridad (P10 - P90).
+          </p>
+        </div>
+        <div class="flex items-center gap-3 text-xs" id="chart-legends">
+          <span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-slate-400"></span> Histórico Real</span>
+          <span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span> Proyección TimesFM (P50)</span>
+          <span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-cyan-400/40"></span> Cono P10-P90</span>
+        </div>
+      </div>
+
+      <div class="relative h-80 w-full">
+        <canvas id="forecastChart"></canvas>
+      </div>
+    </div>
+
+    <!-- BACKTEST DAY-BY-DAY COMPARISON TABLE (VISIBLE ONLY IN BACKTEST) -->
+    <div id="backtest-table-container" class="hidden bg-slate-800/50 border border-slate-700/70 rounded-2xl p-5 shadow-xl space-y-4">
+      <h3 class="text-sm font-bold text-white flex items-center gap-2">
+        <span>🔍</span> Comparativa Detallada Día a Día (Real vs Predicho a Ciegas)
+      </h3>
+      <div class="overflow-x-auto rounded-xl border border-slate-700/60">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-900/90 uppercase font-bold text-[10px] text-slate-400 tracking-wider">
+            <tr>
+              <th class="py-3 px-4">Fecha</th>
+              <th class="py-3 px-3">Venta Real</th>
+              <th class="py-3 px-3">Predicción P50</th>
+              <th class="py-3 px-3">Banda Seguridad [P10 - P90]</th>
+              <th class="py-3 px-3">Desviación Absoluta</th>
+              <th class="py-3 px-4">¿Dentro del Cono?</th>
+            </tr>
+          </thead>
+          <tbody id="backtest-table-body" class="divide-y divide-slate-800 bg-slate-900/40">
+            <!-- Filas del backtest -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- INVENTORY HEALTH & REPLENISHMENT TABLE -->
+    <div class="bg-slate-800/50 border border-slate-700/70 rounded-2xl p-5 shadow-xl space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <span>📦</span> Recomendador Inteligente de Reposición y Rotura de Stock
+          </h2>
+          <p class="text-xs text-slate-400">Cálculo de pedidos basado en el tiempo de entrega de proveedores (Lead Time) y la demanda pesimista P90.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div id="summary-counters" class="flex items-center gap-1.5 text-xs mr-2"></div>
+          <button onclick="exportCSV()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white transition flex items-center gap-1">
+            <span>📥</span> Exportar Orden (CSV)
+          </button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-700/60">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-900/90 uppercase font-bold text-[10px] text-slate-400 tracking-wider">
+            <tr>
+              <th class="py-3 px-4">Producto</th>
+              <th class="py-3 px-3">Stock Físico</th>
+              <th class="py-3 px-3">Lead Time</th>
+              <th class="py-3 px-3">Días Cobertura (DOI)</th>
+              <th class="py-3 px-3">Punto Reorden (ROP)</th>
+              <th class="py-3 px-3">Fecha Rotura</th>
+              <th class="py-3 px-3">Sugerencia Pedido</th>
+              <th class="py-3 px-3">Coste Estimado</th>
+              <th class="py-3 px-4">Estado / Riesgo</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-table-body" class="divide-y divide-slate-800 bg-slate-900/40">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="text-center py-6 text-xs text-slate-500 border-t border-slate-800/80">
+    Google TimesFM Zero-Shot Forecast • Arquitectura Harness Engineering • PYME AI
+  </footer>
+
+  <script>
+    let currentMode = "30"; // "7", "30", "60", "90", o "backtest"
+    let productsList = [];
+    let selectedProductId = "";
+    let chartInstance = null;
+    let currentStoreRecommendations = [];
+
+    async function init() {
+      await fetchHealth();
+      await fetchProducts();
+      await fetchInventorySummary();
+    }
+
+    async function fetchHealth() {
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        const badge = document.getElementById('engine-name');
+        badge.innerText = `${data.timesfm_provider} ${data.is_mock ? '(Simulador Local)' : '(Modelo Nativo)'}`;
+      } catch (e) {
+        document.getElementById('engine-name').innerText = "Desconectado";
+      }
+    }
+
+    async function fetchProducts() {
+      try {
+        const res = await fetch('/api/products');
+        productsList = await res.json();
+        const select = document.getElementById('product-select');
+        select.innerHTML = '';
+        
+        productsList.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.product_id;
+          opt.innerText = p.product_name;
+          select.appendChild(opt);
+        });
+
+        if (productsList.length > 0) {
+          selectedProductId = productsList[0].product_id;
+          await loadForecast();
+        }
+      } catch (e) {
+        console.error("Error fetching products", e);
+      }
+    }
+
+    async function onProductChange() {
+      selectedProductId = document.getElementById('product-select').value;
+      if (currentMode === "backtest") {
+        await runBacktest();
+      } else {
+        await loadForecast();
+      }
+    }
+
+    function setHorizon(days) {
+      currentMode = days.toString();
+      updateButtonStyles();
+      document.getElementById('backtest-banner').classList.add('hidden');
+      document.getElementById('backtest-table-container').classList.add('hidden');
+      document.getElementById('chart-main-title').innerHTML = "<span>📈</span> Pronóstico Probabilístico Zero-Shot con Google TimesFM";
+      document.getElementById('chart-sub-title').innerText = "Serie histórica real junto con la mediana proyectada (P50) y la banda sombreada de seguridad (P10 - P90).";
+      loadForecast();
+    }
+
+    function updateButtonStyles() {
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        const m = btn.getAttribute('data-mode');
+        if (m === currentMode) {
+          if (m === 'backtest') {
+            btn.className = "mode-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-900 border border-amber-400 transition flex items-center gap-1.5 shadow-md shadow-amber-500/20";
+          } else {
+            btn.className = "mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white border border-blue-500 transition";
+          }
+        } else {
+          if (m === 'backtest') {
+            btn.className = "mode-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition flex items-center gap-1.5";
+          } else {
+            btn.className = "mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-700 hover:border-slate-500 transition";
+          }
+        }
+      });
+    }
+
+    async function loadForecast() {
+      if (!selectedProductId) return;
+      const horizon = parseInt(currentMode) || 30;
+      try {
+        const res = await fetch('/api/forecast', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ product_id: selectedProductId, horizon_days: horizon })
+        });
+        const forecast = await res.json();
+        
+        const prod = productsList.find(p => p.product_id === selectedProductId);
+        renderForecastChart(prod ? prod.history : [], forecast);
+        updateKPIs(forecast);
+      } catch (e) {
+        console.error("Error generating forecast", e);
+      }
+    }
+
+    async function runBacktest() {
+      if (!selectedProductId) return;
+      currentMode = "backtest";
+      updateButtonStyles();
+      
+      document.getElementById('backtest-banner').classList.remove('hidden');
+      document.getElementById('backtest-table-container').classList.remove('hidden');
+      document.getElementById('chart-main-title').innerHTML = "<span>🧪</span> Prueba Ciega Retrospectiva (Backtesting 7 Días)";
+      document.getElementById('chart-sub-title').innerText = "Ocultamos la última semana al modelo: compara lo que TimesFM predijo a ciegas vs lo que REALMENTE se vendió.";
+
+      try {
+        const res = await fetch('/api/backtest', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ product_id: selectedProductId, holdout_days: 7 })
+        });
+        const bt = await res.json();
+        
+        document.getElementById('bt-accuracy').innerText = `${bt.accuracy_pct}%`;
+        document.getElementById('bt-coverage').innerText = `${bt.coverage_pct}%`;
+        document.getElementById('backtest-verdict').innerText = bt.verdict;
+
+        // KPIs en modo backtest
+        document.getElementById('kpi-title-1').innerText = "Ventas Reales (7 Días)";
+        document.getElementById('kpi-p50').innerText = `${bt.total_actual} uds`;
+        document.getElementById('kpi-p50-sub').innerText = `Predicción P50: ${bt.total_predicted_p50} uds (Desv: ${Math.abs(Math.round(bt.total_actual - bt.total_predicted_p50))} uds)`;
+
+        document.getElementById('kpi-title-2').innerText = "Precisión del Modelo (100-MAPE)";
+        document.getElementById('kpi-interval').innerText = `${bt.accuracy_pct}%`;
+        document.getElementById('kpi-interval-sub').innerText = `Error porcentual medio: ${bt.mape}%`;
+
+        document.getElementById('kpi-title-3').innerText = "Acierto en Banda P10-P90";
+        document.getElementById('kpi-doi').innerText = `${bt.coverage_pct}%`;
+        document.getElementById('kpi-runout').innerText = "Días que cayeron dentro del cono seguro";
+
+        document.getElementById('kpi-title-4').innerText = "Diagnóstico Auditoría";
+        document.getElementById('kpi-action').innerText = bt.coverage_pct >= 80 ? "Alta Confianza" : "Confianza Media";
+        document.getElementById('kpi-action-sub').innerText = "Basado en 7 días de validación ciega";
+
+        renderBacktestChart(bt);
+        renderBacktestTable(bt.points);
+      } catch (e) {
+        alert("Error ejecutando backtest: " + e.message);
+      }
+    }
+
+    function renderForecastChart(history, forecast) {
+      const ctx = document.getElementById('forecastChart').getContext('2d');
+      const recentHistory = history.slice(-30);
+      const labels = [...recentHistory.map(h => h.date), ...forecast.points.map(f => f.date)];
+      
+      const histData = [...recentHistory.map(h => h.units_sold), ...forecast.points.map(() => null)];
+      const p50Data = [...recentHistory.map(() => null)];
+      if (recentHistory.length > 0) {
+        p50Data[recentHistory.length - 1] = recentHistory[recentHistory.length - 1].units_sold;
+      }
+      forecast.points.forEach(f => p50Data.push(f.p50));
+
+      const p90Data = [...recentHistory.map(() => null)];
+      const p10Data = [...recentHistory.map(() => null)];
+      if (recentHistory.length > 0) {
+        const lastVal = recentHistory[recentHistory.length - 1].units_sold;
+        p90Data[recentHistory.length - 1] = lastVal;
+        p10Data[recentHistory.length - 1] = lastVal;
+      }
+      forecast.points.forEach(f => {
+        p90Data.push(f.p90);
+        p10Data.push(f.p10);
+      });
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Ventas Reales',
+              data: histData,
+              borderColor: '#94a3b8',
+              backgroundColor: 'rgba(148, 163, 184, 0.2)',
+              borderWidth: 2,
+              pointRadius: 2,
+              tension: 0.2
+            },
+            {
+              label: 'TimesFM P50 (Mediana)',
+              data: p50Data,
+              borderColor: '#3b82f6',
+              borderWidth: 2.5,
+              borderDash: [4, 4],
+              pointRadius: 3,
+              pointBackgroundColor: '#3b82f6',
+              tension: 0.2
+            },
+            {
+              label: 'P90 (Pico pesimista)',
+              data: p90Data,
+              borderColor: 'rgba(56, 189, 248, 0.4)',
+              borderWidth: 1,
+              pointRadius: 0,
+              fill: '+1',
+              backgroundColor: 'rgba(56, 189, 248, 0.12)',
+              tension: 0.3
+            },
+            {
+              label: 'P10 (Escenario bajo)',
+              data: p10Data,
+              borderColor: 'rgba(56, 189, 248, 0.4)',
+              borderWidth: 1,
+              pointRadius: 0,
+              fill: false,
+              tension: 0.3
+            }
+          ]
+        },
+        options: getChartOptions()
+      });
+    }
+
+    function renderBacktestChart(bt) {
+      const ctx = document.getElementById('forecastChart').getContext('2d');
+      const prod = productsList.find(p => p.product_id === bt.product_id);
+      if (!prod) return;
+
+      const trainHistory = prod.history.slice(-30, -bt.holdout_days);
+      const labels = [...trainHistory.map(h => h.date), ...bt.points.map(p => p.date)];
+      
+      const trainData = [...trainHistory.map(h => h.units_sold), ...bt.points.map(() => null)];
+      
+      // Conectar con el punto de predicción
+      const p50Data = [...trainHistory.map(() => null)];
+      const p90Data = [...trainHistory.map(() => null)];
+      const p10Data = [...trainHistory.map(() => null)];
+      const actualBlindData = [...trainHistory.map(() => null)];
+
+      if (trainHistory.length > 0) {
+        const lastVal = trainHistory[trainHistory.length - 1].units_sold;
+        p50Data[trainHistory.length - 1] = lastVal;
+        p90Data[trainHistory.length - 1] = lastVal;
+        p10Data[trainHistory.length - 1] = lastVal;
+      }
+
+      bt.points.forEach(pt => {
+        p50Data.push(pt.p50);
+        p90Data.push(pt.p90);
+        p10Data.push(pt.p10);
+        actualBlindData.push(pt.actual_sales);
+      });
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Histórico Pasado Conocido',
+              data: trainData,
+              borderColor: '#64748b',
+              borderWidth: 2,
+              pointRadius: 2,
+              tension: 0.2
+            },
+            {
+              label: '🎯 Venta Real Ocurrida (Prueba Ciega)',
+              data: actualBlindData,
+              borderColor: '#10b981',
+              backgroundColor: '#10b981',
+              borderWidth: 2.5,
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              tension: 0.1
+            },
+            {
+              label: 'Predicción Ciega TimesFM (P50)',
+              data: p50Data,
+              borderColor: '#3b82f6',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              pointRadius: 3,
+              tension: 0.2
+            },
+            {
+              label: 'P90 (Techo de seguridad)',
+              data: p90Data,
+              borderColor: 'rgba(56, 189, 248, 0.4)',
+              borderWidth: 1,
+              pointRadius: 0,
+              fill: '+1',
+              backgroundColor: 'rgba(56, 189, 248, 0.15)',
+              tension: 0.3
+            },
+            {
+              label: 'P10 (Suelo)',
+              data: p10Data,
+              borderColor: 'rgba(56, 189, 248, 0.4)',
+              borderWidth: 1,
+              pointRadius: 0,
+              fill: false,
+              tension: 0.3
+            }
+          ]
+        },
+        options: getChartOptions()
+      });
+    }
+
+    function renderBacktestTable(points) {
+      const tbody = document.getElementById('backtest-table-body');
+      tbody.innerHTML = '';
+      points.forEach(pt => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/60 transition";
+        const insideBadge = pt.inside_cone 
+          ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">✓ SÍ (En banda)</span>'
+          : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">FUERA</span>';
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-semibold text-white">${pt.date}</td>
+          <td class="py-3 px-3 font-bold text-emerald-400">${pt.actual_sales} uds</td>
+          <td class="py-3 px-3 text-blue-400">${pt.p50} uds</td>
+          <td class="py-3 px-3 text-cyan-300 font-mono">[${pt.p10} - ${pt.p90}]</td>
+          <td class="py-3 px-3 text-slate-300">${pt.abs_error} uds</td>
+          <td class="py-3 px-4">${insideBadge}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function getChartOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: true, labels: { color: '#94a3b8', font: { size: 10 } } },
+          tooltip: {
+            backgroundColor: '#0f172a',
+            titleColor: '#f8fafc',
+            bodyColor: '#cbd5e1',
+            borderColor: '#334155',
+            borderWidth: 1,
+            padding: 10
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(51, 65, 85, 0.4)' },
+            ticks: { color: '#64748b', maxTicksLimit: 12, font: { size: 10 } }
+          },
+          y: {
+            grid: { color: 'rgba(51, 65, 85, 0.4)' },
+            ticks: { color: '#64748b', font: { size: 10 } },
+            beginAtZero: true
+          }
+        }
+      };
+    }
+
+    function updateKPIs(forecast) {
+      document.getElementById('kpi-title-1').innerText = "Demanda Proyectada (P50)";
+      document.getElementById('kpi-p50').innerText = `${forecast.expected_total_demand} uds`;
+      document.getElementById('kpi-p50-sub').innerText = `Unidades estimadas a ${currentMode} días`;
+
+      document.getElementById('kpi-title-2').innerText = "Cono de Incertidumbre (P10 - P90)";
+      document.getElementById('kpi-interval').innerText = `${forecast.p10_total_demand} - ${forecast.p90_total_demand} uds`;
+      document.getElementById('kpi-interval-sub').innerText = "Escenario bajo vs pico de demanda";
+
+      document.getElementById('kpi-title-3').innerText = "Cobertura de Inventario (DOI)";
+      document.getElementById('kpi-title-4').innerText = "Acción Sugerida";
+
+      const trendTag = document.getElementById('trend-tag');
+      if (forecast.trend_direction === 'UP') {
+        trendTag.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-900/60 text-emerald-300 border border-emerald-700";
+        trendTag.innerText = "▲ En Crecimiento";
+      } else if (forecast.trend_direction === 'DOWN') {
+        trendTag.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-rose-900/60 text-rose-300 border border-rose-700";
+        trendTag.innerText = "▼ Descendente";
+      } else {
+        trendTag.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700";
+        trendTag.innerText = "● Estable";
+      }
+
+      const rec = currentStoreRecommendations.find(r => r.product_id === forecast.product_id);
+      if (rec) {
+        document.getElementById('kpi-doi').innerText = `${rec.days_of_inventory} días`;
+        document.getElementById('kpi-runout').innerText = rec.runout_date ? `Rotura estimada: ${rec.runout_date}` : "Sin riesgo próximo de rotura";
+        
+        const doiBadge = document.getElementById('doi-badge');
+        if (rec.risk_level === 'CRITICAL') {
+          doiBadge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30";
+          doiBadge.innerText = "CRÍTICO";
+          document.getElementById('kpi-action').innerText = `Pedir ${rec.recommended_order_units} uds`;
+        } else if (rec.risk_level === 'WARNING') {
+          doiBadge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+          doiBadge.innerText = "REORDEN";
+          document.getElementById('kpi-action').innerText = `Pedir ${rec.recommended_order_units} uds`;
+        } else if (rec.risk_level === 'OVERSTOCKED') {
+          doiBadge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30";
+          doiBadge.innerText = "SOBRESTOCK";
+          document.getElementById('kpi-action').innerText = "No pedir";
+        } else {
+          doiBadge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+          doiBadge.innerText = "ÓPTIMO";
+          document.getElementById('kpi-action').innerText = "Stock saludable";
+        }
+        document.getElementById('kpi-action-sub').innerText = `Punto reorden: ${rec.reorder_point} uds | Stock: ${rec.current_stock}`;
+      }
+    }
+
+    async function fetchInventorySummary() {
+      try {
+        const res = await fetch('/api/inventory/recommendations');
+        const data = await res.json();
+        currentStoreRecommendations = data.recommendations;
+        
+        const counters = document.getElementById('summary-counters');
+        counters.innerHTML = `
+          <span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold border border-red-500/30">${data.critical_count} Críticos</span>
+          <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">${data.warning_count} Por Reordenar</span>
+          <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">${data.optimal_count} Óptimos</span>
+        `;
+
+        const tbody = document.getElementById('inventory-table-body');
+        tbody.innerHTML = '';
+
+        data.recommendations.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-800/60 transition";
+          
+          let badgeClass = "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+          let badgeText = "Óptimo";
+          if (r.risk_level === 'CRITICAL') {
+            badgeClass = "bg-red-500/20 text-red-400 border-red-500/30";
+            badgeText = "Crítico";
+          } else if (r.risk_level === 'WARNING') {
+            badgeClass = "bg-amber-500/20 text-amber-400 border-amber-500/30";
+            badgeText = "Reorden";
+          } else if (r.risk_level === 'OVERSTOCKED') {
+            badgeClass = "bg-blue-500/20 text-blue-400 border-blue-500/30";
+            badgeText = "Sobrestock";
+          }
+
+          tr.innerHTML = `
+            <td class="py-3 px-4 font-semibold text-white">${r.product_name}</td>
+            <td class="py-3 px-3">${r.current_stock} uds</td>
+            <td class="py-3 px-3">${r.lead_time_days} d</td>
+            <td class="py-3 px-3 font-medium ${r.days_of_inventory < 10 ? 'text-red-400' : 'text-slate-300'}">${r.days_of_inventory} días</td>
+            <td class="py-3 px-3">${r.reorder_point} uds</td>
+            <td class="py-3 px-3 text-slate-400">${r.runout_date || 'N/A'}</td>
+            <td class="py-3 px-3 font-bold ${r.recommended_order_units > 0 ? 'text-amber-400' : 'text-slate-400'}">${r.recommended_order_units > 0 ? '+' + r.recommended_order_units + ' uds' : '0'}</td>
+            <td class="py-3 px-3">${r.estimated_order_cost > 0 ? r.estimated_order_cost + ' €' : '-'}</td>
+            <td class="py-3 px-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badgeClass}">${badgeText}</span>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        console.error("Error fetching inventory summary", e);
+      }
+    }
+
+    async function loadDemoData() {
+      try {
+        const res = await fetch('/api/load-sample', { method: 'POST' });
+        await init();
+        alert("¡Dataset de prueba cargado con éxito! (90 días de ventas de cafetería gourmet)");
+      } catch (e) {
+        alert("Error cargando demo: " + e.message);
+      }
+    }
+
+    async function uploadCSV(input) {
+      if (!input.files || input.files.length === 0) return;
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        if (!res.ok) throw new Error("Error en servidor al procesar archivo");
+        const summary = await res.json();
+        alert(`¡Archivo cargado! Detectados ${summary.products_count} productos en ${summary.total_rows_parsed} líneas.`);
+        await init();
+      } catch (e) {
+        alert("Error subiendo archivo: " + e.message);
+      }
+    }
+
+    function exportCSV() {
+      if (!currentStoreRecommendations.length) return;
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Producto,Stock_Actual,Lead_Time_Dias,Dias_Cobertura_DOI,Punto_Reorden_ROP,Unidades_Sugeridas,Coste_Estimado_Euros,Riesgo\n";
+      currentStoreRecommendations.forEach(r => {
+        csvContent += `"${r.product_name}",${r.current_stock},${r.lead_time_days},${r.days_of_inventory},${r.reorder_point},${r.recommended_order_units},${r.estimated_order_cost},${r.risk_level}\n`;
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `orden_reposicion_timesfm_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

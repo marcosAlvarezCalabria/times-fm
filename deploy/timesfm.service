@@ -1,0 +1,18 @@
+[Unit]
+Description=TimesFM Sales & Inventory Forecast Web App
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/var/www/times-fm
+Environment="PATH=/var/www/times-fm/.venv/bin"
+ExecStart=/var/www/times-fm/.venv/bin/uvicorn src.domains.sales.ui:get_full_application --factory --host 127.0.0.1 --port 8000 --workers 2
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

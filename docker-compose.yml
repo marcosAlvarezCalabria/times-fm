@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  timesfm-app:
+    build: .
+    container_name: timesfm-sales-forecast
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - TIMESFM_USE_REAL=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
